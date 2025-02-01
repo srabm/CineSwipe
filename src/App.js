@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth'; // Fixed imports
 import AuthPage from './components/AuthPage';
 import Home from './components/Home'; // Import Home component
+import MovieList from './components/MovieList'; // Import MovieList component
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -27,7 +28,7 @@ const App = () => {
 
   return (
     <div>
-      {user ? <Home user={user} /> : <AuthPage />}
+      {user ? <MovieList user={user} /> : <AuthPage />}
     </div>
   );
 };
