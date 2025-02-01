@@ -1,43 +1,40 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
 import Home from './pages/Home';
-import Filter from './components/Filter';
 //import Login from './pages/Login';
 import NoPage from './pages/NoPage';
+import AuthPage from './pages/AuthPage';
+import Filter from './components/Filter';
 import './App.css';
-import { useEffect, useState } from 'react';
-import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth'; // Fixed imports
-import AuthPage from './components/AuthPage';
-import MovieList from './components/MovieList'; // Import MovieList component
 
 const App = () => {
   const [user, setUser] = useState(null);
+  const auth = getAuth();
 
   useEffect(() => {
-    const auth = getAuth();
-
-    // Set persistence to keep user logged in even after browser is closed
-    setPersistence(auth, browserLocalPersistence) 
+    // Set persistence to keep user logged in after closing the browser
+    setPersistence(auth, browserLocalPersistence)
       .then(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-          setUser(currentUser);  // Update user state based on auth changes
+          setUser(currentUser);  
         });
 
-        // Cleanup the listener on component unmount
-        return () => unsubscribe(); 
+        return unsubscribe; // Cleanup listener on unmount
       })
       .catch((error) => {
-        console.error('Error setting persistence: ', error);
+        console.error('Error setting persistence:', error);
       });
   }, []);
 
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<AuthPage/>}/>
-        <Route path="home" element={<Home/>}/>
-        <Route path="filter" element={<Filter/>}/>
-        <Route path="*" element={<NoPage/>}/>
+        {/* If user is logged in, show Home, else show AuthPage */}
+        <Route path="/" element={user ? <Home user={user} /> : <AuthPage />} />
+       <Route path="/home" element={user ? <Home user={user} /> : <AuthPage />} />
+        <Route path="/filter" element={user ? <Filter /> : <AuthPage />} />
+        <Route path="*" element={<NoPage />} />
       </Routes>
     </div>
   );
