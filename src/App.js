@@ -1,12 +1,13 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import Filter from './components/Filter';
+//import Login from './pages/Login';
 import NoPage from './pages/NoPage';
 import './App.css';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth'; // Fixed imports
 import AuthPage from './components/AuthPage';
-import Home from './components/Home'; // Import Home component
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -32,7 +33,7 @@ const App = () => {
   return (
     <div className="App">
       <Routes>
-        <Route path="/" element={<Login/>}/>
+        <Route path="/" element={<AuthPage/>}/>
         <Route path="home" element={<Home/>}/>
         <Route path="filter" element={<Filter/>}/>
         <Route path="*" element={<NoPage/>}/>
