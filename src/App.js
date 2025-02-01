@@ -1,3 +1,7 @@
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Home from './pages/Home';
+import NoPage from './pages/NoPage';
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth'; // Fixed imports
@@ -27,8 +31,13 @@ const App = () => {
   }, []);
 
   return (
-    <div>
-      {user ? <MovieList user={user} /> : <AuthPage />}
+    <div className="App">
+      <Routes>
+        <Route path="/" element={<Login/>}/>
+        <Route path="home" element={<Home/>}/>
+        <Route path="filter" element={<Filter/>}/>
+        <Route path="*" element={<NoPage/>}/>
+      </Routes>
     </div>
   );
 };
