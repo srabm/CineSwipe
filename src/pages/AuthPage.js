@@ -7,6 +7,7 @@ const AuthPage = () => {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const auth = getAuth();
 
@@ -16,8 +17,8 @@ const AuthPage = () => {
     try {
       await signInWithEmailAndPassword(auth, email, password);
       console.log("Logged in successfully!");
-      setError('');  // Clear error on successful login
-      useNavigate('./home');
+      setError('');  
+      navigate('/home');
     } catch (err) {
       setError('Error: ' + err.message);  // Show error message if login fails
     }
@@ -29,7 +30,8 @@ const AuthPage = () => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
       console.log("Signed up successfully!");
-      setError(''); // Clear error message on successful signup
+      setError('');
+      navigate('/home'); 
     } catch (err) {
       setError('Error: ' + err.message);
     }
