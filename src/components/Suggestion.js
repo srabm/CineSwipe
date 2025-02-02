@@ -2,39 +2,36 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { fetchPopularMovies, searchMovieInTMDB } from '../services/tmdbService';
 
-const MovieList = () => {
-  const [movies, setMovies] = useState([]);
+const Suggestion = () => {
+  const [popularMovies, setPopularMovies] = useState([]);
   const [likedMovies, setLikedMovies] = useState([]);
   const [dislikedMovies, setDislikedMovies] = useState([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentMovieIndex, setCurrentMovieIndex] = useState(0);
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
   const geminiApiKey = 'YOUR_GEMINI_API_KEY';
   const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
 
-  // Fetch popular movies initially
   useEffect(() => {
-    const getMovies = async () => {
+    const loadPopularMovies = async () => {
       try {
-        const movieData = await fetchPopularMovies();
-        setMovies(movieData);
+        const movies = await fetchPopularMovies();
+        setPopularMovies(movies);
       } catch (error) {
-        setError('Failed to fetch movies');
+        console.error('Failed to fetch popular movies:', error);
       }
     };
 
-    getMovies();
+    loadPopularMovies();
   }, []);
 
-  // Fetch movie recommendations from Gemini based on likes and dislikes
   const fetchRecommendations = async () => {
     if (likedMovies.length === 0) return;
 
     setLoading(true);
     setRecommendedMovies([]);
-    setCurrentIndex(0);
+    setCurrentMovieIndex(0);
 
     const prompt = `
       Based on the following movies that I like: "${likedMovies.join(', ')}",
@@ -75,9 +72,8 @@ const MovieList = () => {
     }
   };
 
-  // Handle like or dislike actions
-  const handleResponse = (response) => {
-    const currentMovie = movies.length > 0 && currentIndex < movies.length ? movies[currentIndex] : recommendedMovies[currentIndex];
+  const handleUserResponse = (response) => {
+    const currentMovie = popularMovies[currentMovieIndex];
 
     if (response === 'like') {
       setLikedMovies((prev) => [...prev, currentMovie.title]);
@@ -85,40 +81,47 @@ const MovieList = () => {
       setDislikedMovies((prev) => [...prev, currentMovie.title]);
     }
 
-    if (currentIndex < movies.length - 1) {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
-    } else if (recommendedMovies.length === 0) {
-      fetchRecommendations(); // Switch to Gemini recommendations
-    } else if (currentIndex < recommendedMovies.length - 1) {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
+    if (currentMovieIndex < popularMovies.length - 1) {
+      setCurrentMovieIndex((prevIndex) => prevIndex + 1);
     } else {
-      setError('No more movies available.');
+      fetchRecommendations(); // Switch to Gemini recommendations
     }
   };
 
-  // Current movie to show
-  const currentMovie = movies.length > 0 && currentIndex < movies.length ? movies[currentIndex] : recommendedMovies[currentIndex];
-
   return (
     <div>
-      <h1>Movie Suggestions</h1>
-      {error && <p>{error}</p>}
+      <h2>Movie Suggestions</h2>
 
-      {currentMovie ? (
+      {popularMovies.length > 0 && currentMovieIndex < popularMovies.length ? (
         <div className="movie">
+          <h3>{popularMovies[currentMovieIndex].title}</h3>
           <img
-            src={`https://image.tmdb.org/t/p/w500${currentMovie.poster_path}`}
-            alt={currentMovie.title}
+            src={`https://image.tmdb.org/t/p/w500${popularMovies[currentMovieIndex].poster_path}`}
+            alt={popularMovies[currentMovieIndex].title}
           />
-          <h3>{currentMovie.title}</h3>
-          <p>{currentMovie.overview}</p>
+          <p>{popularMovies[currentMovieIndex].overview}</p>
+
           <div className="movie-actions">
-            <button onClick={() => handleResponse('like')}>👍 Like</button>
-            <button onClick={() => handleResponse('dislike')}>👎 Dislike</button>
+            <button onClick={() => handleUserResponse('like')}>👍 Like</button>
+            <button onClick={() => handleUserResponse('dislike')}>👎 Dislike</button>
           </div>
         </div>
       ) : loading ? (
         <p>Loading recommendations...</p>
+      ) : recommendedMovies.length > 0 ? (
+        <div className="movie">
+          <h3>{recommendedMovies[currentMovieIndex].title}</h3>
+          <img
+            src={`https://image.tmdb.org/t/p/w500${recommendedMovies[currentMovieIndex].poster_path}`}
+            alt={recommendedMovies[currentMovieIndex].title}
+          />
+          <p>{recommendedMovies[currentMovieIndex].overview}</p>
+
+          <div className="movie-actions">
+            <button onClick={() => handleUserResponse('like')}>👍 Like</button>
+            <button onClick={() => handleUserResponse('dislike')}>👎 Dislike</button>
+          </div>
+        </div>
       ) : (
         <p>No more movies to show.</p>
       )}
@@ -126,4 +129,4 @@ const MovieList = () => {
   );
 };
 
-export default MovieList;
+export default Suggestion;

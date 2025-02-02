@@ -1,20 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { fetchMovieGenres } from '../services/tmdbService'; // Import the fetch function
-import { getFirestore, doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore'; // Add Firestore imports
+import { fetchMovieGenres } from '../services/tmdbService';
+import { getFirestore, doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import '../frontend/Filter.css';
+import CineSwipeLogo from '../images/Cineswipe.png';
 
 function Filter() {
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState('');
-  const [numSwipes, setNumSwipes] = useState(10); // Default value
-  const [timePerSwipe, setTimePerSwipe] = useState(5); // Default value
+  const [numSwipes, setNumSwipes] = useState(10);
+  const [timePerSwipe, setTimePerSwipe] = useState(5);
   const [sessionCode, setSessionCode] = useState('');
-  const [sessionData, setSessionData] = useState(null); // Add state for session data
+  const [sessionData, setSessionData] = useState(null);
 
-  const auth = getAuth(); // Get Auth instance
-  const db = getFirestore(); // Get Firestore instance
+  const auth = getAuth();
+  const db = getFirestore();
+  const navigate = useNavigate();
 
-  // Function to generate a unique code
   const generateUniqueCode = (length = 6) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
@@ -25,7 +28,6 @@ function Filter() {
     return code;
   };
 
-  // Fetch genres when the component mounts
   useEffect(() => {
     const getGenres = async () => {
       try {
@@ -37,12 +39,9 @@ function Filter() {
     };
 
     getGenres();
-
-    // Generate and set the unique code when the component mounts
     const newSessionCode = generateUniqueCode();
     setSessionCode(newSessionCode);
 
-    // Fetch session data from Firestore (if it exists)
     const fetchSessionData = async () => {
       const sessionRef = doc(db, "sessions", newSessionCode);
       const sessionDoc = await getDoc(sessionRef);
@@ -54,7 +53,6 @@ function Filter() {
     fetchSessionData();
   }, []);
 
-  // Function to create a session in Firestore
   const createSession = async () => {
     const user = auth.currentUser;
     if (!user) {
@@ -66,9 +64,9 @@ function Filter() {
       const sessionRef = doc(db, "sessions", sessionCode);
       await setDoc(sessionRef, {
         host: user.uid,
-        participants: [user.uid], // The host is the first participant
-        maxParticipants: numSwipes, // You can adjust this as per the logic
-        sessionStatus: 'waiting', // Session starts in the 'waiting' state
+        participants: [user.uid],
+        maxParticipants: numSwipes,
+        sessionStatus: 'waiting',
         genre: selectedGenre,
         timePerSwipe,
         createdAt: serverTimestamp(),
@@ -80,7 +78,6 @@ function Filter() {
     }
   };
 
-  // Function to start the round (only for the host)
   const startRound = async () => {
     const user = auth.currentUser;
     if (!user || !sessionData || user.uid !== sessionData.host) {
@@ -91,7 +88,7 @@ function Filter() {
     try {
       const sessionRef = doc(db, "sessions", sessionCode);
       await updateDoc(sessionRef, {
-        sessionStatus: 'started', // Change the session status to 'started'
+        sessionStatus: 'started',
       });
 
       console.log('Round started!');
@@ -100,70 +97,70 @@ function Filter() {
     }
   };
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = {
-      code: sessionCode,  // Use the generated code
-      genre: selectedGenre,
-      swipes: numSwipes,
-      timer: timePerSwipe,
-    };
-    console.log('Form Data:', formData);
-
-    // Create session in Firestore
     createSession();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>Host a Swipe Session!</label>
-      <br />
-      
-      <p>Share this code with your friends!</p>
-      <label>Code: </label>
-      <input name='Code' type='text' value={sessionCode} readOnly />
-      <br />
+    <div className="filter-page">
+      <img src={CineSwipeLogo} alt="CineSwipe Logo" className="filter-logo" />
 
-      <label>Movie Genre:</label>
-      <select
-        name='genre'
-        value={selectedGenre}
-        onChange={(e) => setSelectedGenre(e.target.value)}
-      >
-        <option value="">Select a Genre</option>
-        {genres.map((genre) => (
-          <option key={genre.id} value={genre.id}>
-            {genre.name}
-          </option>
-        ))}
-      </select>
-      <br />
+      <form onSubmit={handleSubmit} className="filter-container">
+        <h2>Host a Swipe Session!</h2>
+        <p>Share this code with your friends!</p>
 
-      <label>Number of Swipes</label>
-      <input
-        name='swipes'
-        type='number'
-        value={numSwipes}
-        onChange={(e) => setNumSwipes(e.target.value)}
-        min="1"
-      />
-      <br />
+        <label>Code: </label>
+        <input name='Code' type='text' value={sessionCode} readOnly />
+        <br />
 
-      <label>Time per Swipe (in seconds)</label>
-      <input
-        name='timer'
-        type='number'
-        value={timePerSwipe}
-        onChange={(e) => setTimePerSwipe(e.target.value)}
-        min="1"
-        max="60"
-      />
-      <br />
+        <label>Movie Genre:</label>
+        <select
+          name='genre'
+          value={selectedGenre}
+          onChange={(e) => setSelectedGenre(e.target.value)}
+        >
+          <option value="">Select a Genre</option>
+          {genres.map((genre) => (
+            <option key={genre.id} value={genre.id}>
+              {genre.name}
+            </option>
+          ))}
+        </select>
+        <br />
 
-      {/* Button for the host to start the round */}
-      <button className='start-round' onClick={startRound}>Start Swiping!</button>
-    </form>
+        <label>Number of Swipes:</label>
+        <input
+          name='swipes'
+          type='number'
+          value={numSwipes}
+          onChange={(e) => setNumSwipes(Number(e.target.value))}
+          min="1"
+        />
+        <br />
+
+        <label>Time per Swipe (in seconds):</label>
+        <input
+          name='timer'
+          type='number'
+          value={timePerSwipe}
+          onChange={(e) => setTimePerSwipe(Number(e.target.value))}
+          min="1"
+          max="30"
+        />
+        <br />
+
+        <button className='start' type='submit'>
+          Start Swiping!
+        </button>
+      </form>
+
+      {sessionData?.host === auth.currentUser?.uid && (
+        <button className='start-round' onClick={startRound}>
+          Start the Round
+        </button>
+      )}
+    </div>
   );
 }
 

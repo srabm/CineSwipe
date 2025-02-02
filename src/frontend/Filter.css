@@ -1,0 +1,165 @@
+/* Center the entire page */
+.filter-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px;
+    position: relative; /* For absolute positioning of the logo */
+}
+
+/* Add logo styles */
+.filter-logo {
+    position: absolute;
+    top: 60px; /* Increased from 40px to 60px to provide more space */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px; /* Updated to match AuthPage logo size */
+    height: auto;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Flip animation for the logo when hovered */
+.filter-logo:hover {
+    animation: flipLogo 0.6s forwards; /* Trigger flip animation on hover */
+}
+
+/* Flip animation */
+@keyframes flipLogo {
+    0% {
+        transform: translateX(-50%) rotateY(0deg);
+    }
+    50% {
+        transform: translateX(-50%) rotateY(180deg);
+    }
+    100% {
+        transform: translateX(-50%) rotateY(360deg);
+    }
+}
+
+/* Centering the filter container */
+.filter-container {
+    width: 90%;
+    max-width: 400px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 200px; /* Increased margin-top from 160px to 200px */
+}
+
+/* Apply bounce animation on hover */
+.filter-container:hover {
+    animation: bounce 0.6s ease-in-out;
+}
+
+/* Align labels and inputs vertically, center the form elements */
+.filter-container label {
+    margin-bottom: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: left;
+}
+
+/* Style for input fields and selects */
+.filter-container input,
+.filter-container select {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border 0.3s ease;
+}
+
+.filter-container input:focus,
+.filter-container select:focus {
+    border-color: #a393c2;
+}
+
+/* Button styling */
+.filter-container button,
+.logout-button {
+    width: 100%;
+    max-width: 350px;
+    padding: 12px;
+    background-color: #a393c2;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out, transform 0.2s ease;
+}
+
+.filter-container button:hover,
+.logout-button:hover {
+    background-color: #8b7cb8;
+    transform: scale(1.05);
+}
+
+/* Styling for the logout icon button */
+.logout-icon-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: #4e5b66;  /* Button color */
+  border: none;
+  padding: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Hover effect for logout icon */
+.logout-icon-button:hover {
+  background-color: red;  /* Turn red on hover */
+  transform: scale(1.1);   /* Slightly increase size on hover */
+}
+
+/* Ensure the icon itself is centered */
+.logout-icon-button svg {
+  display: block;
+  margin: 0 auto;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    .filter-page {
+        padding: 10px;
+    }
+
+    .filter-container {
+        width: 100%;
+        max-width: 90%;
+        padding: 15px;
+    }
+
+    .filter-container input,
+    .filter-container select {
+        font-size: 14px;
+    }
+
+    .filter-container button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .filter-page {
+        padding: 5px;
+    }
+
+    .filter-container {
+        width: 100%;
+        max-width: 100%;
+    }
+}
