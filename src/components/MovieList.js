@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { fetchPopularMovies, searchMovieInTMDB } from '../services/tmdbService';
+//import MovieCard from './MovieCard';
 
 const MovieList = () => {
   const [movies, setMovies] = useState([]);
@@ -11,10 +12,9 @@ const MovieList = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const geminiApiKey = 'YOUR_GEMINI_API_KEY';
+  const geminiApiKey = 'AIzaSyC3f6ljjJh8pPxDlHJkEo6eQrTHts1iOzk';
   const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
 
-  // Fetch popular movies initially
   useEffect(() => {
     const getMovies = async () => {
       try {
@@ -28,7 +28,7 @@ const MovieList = () => {
     getMovies();
   }, []);
 
-  // Fetch movie recommendations from Gemini based on likes and dislikes
+  // movie recommendations from Gemini 
   const fetchRecommendations = async () => {
     if (likedMovies.length === 0) return;
 
@@ -75,7 +75,7 @@ const MovieList = () => {
     }
   };
 
-  // Handle like or dislike actions
+  // like or dislike actions
   const handleResponse = (response) => {
     const currentMovie = movies.length > 0 && currentIndex < movies.length ? movies[currentIndex] : recommendedMovies[currentIndex];
 
@@ -96,7 +96,7 @@ const MovieList = () => {
     }
   };
 
-  // Current movie to show
+  // current movie to show
   const currentMovie = movies.length > 0 && currentIndex < movies.length ? movies[currentIndex] : recommendedMovies[currentIndex];
 
   return (

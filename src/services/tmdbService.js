@@ -3,7 +3,6 @@ import axios from 'axios';
 const TMDB_API_KEY = 'fa0e60d8fedcb38bfc19493a4a165471'; 
 const BASE_URL = 'https://api.themoviedb.org/3';
 
-// Fetch popular movies
 export const fetchPopularMovies = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/movie/popular`, {
@@ -13,16 +12,16 @@ export const fetchPopularMovies = async () => {
         page: 1,
       },
     });
-    return response.data.results; // Return the list of movies
+    return response.data.results; 
   } catch (error) {
     console.error('Error fetching popular movies:', error);
-    throw error; // Rethrow error to handle in the component
+    throw error; 
   }
 };
 
 export const fetchMovieByTitle = async (movieTitle) => {
   try {
-    // First, search for the movie by title
+    // search title
     const searchResponse = await axios.get(`${BASE_URL}/search/movie`, {
       params: {
         api_key: TMDB_API_KEY,
@@ -40,13 +39,13 @@ export const fetchMovieByTitle = async (movieTitle) => {
           language: 'en-US',
         },
       });
-      return movieResponse.data; // Return the movie details
+      return movieResponse.data; // movie details
     } else {
       throw new Error('Movie not found');
     }
   } catch (error) {
     console.error('Error fetching movie details:', error);
-    throw error; // Rethrow error to handle in the component
+    throw error;
   }
 };
 
@@ -61,7 +60,7 @@ export const searchMovieInTMDB = async (movieTitle) => {
     return null;
   }
 };
-export const fetchMovieGenres = async () => {
+export const fetchMovieGenres = async (selectedGenre) => {
   try {
       const response = await axios.get(`${BASE_URL}/genre/movie/list`, {
           params: {
