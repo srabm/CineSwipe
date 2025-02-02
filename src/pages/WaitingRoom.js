@@ -57,7 +57,7 @@ function WaitingRoom() {
         if (session.sessionStatus === 'started') {
           setIsSessionStarted(true);
           // Redirect everyone to the next page when the session starts
-          navigate(`/nextPage/${sessionCode}`); // Replace with your next page route
+          navigate(`/nextPage/${sessionCode}`); 
         }
 
         if (auth.currentUser && session.participants.includes(auth.currentUser.uid)) {
@@ -85,10 +85,12 @@ function WaitingRoom() {
       }, { merge: true });
 
       console.log('Session started!');
-    } catch (error) {
-      console.error('Error starting session:', error);
-    }
-  };
+    // Redirect to MovieList page after session starts
+    navigate(`/movieList/${sessionCode}`);
+  } catch (error) {
+    console.error('Error starting session:', error);
+  }
+};
 
   return (
     <div>

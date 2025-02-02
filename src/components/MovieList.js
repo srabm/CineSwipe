@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { fetchPopularMovies, searchMovieInTMDB } from '../services/tmdbService';
 //import MovieCard from './MovieCard';
+import { getFirestore, doc, onSnapshot, getDoc } from 'firebase/firestore'; 
+import { useParams } from 'react-router-dom';
 
 const MovieList = () => {
+  const { sessionCode } = useParams(); // Get session code from the URL
   const [movies, setMovies] = useState([]);
   const [likedMovies, setLikedMovies] = useState([]);
   const [dislikedMovies, setDislikedMovies] = useState([]);
@@ -11,21 +14,34 @@ const MovieList = () => {
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const db = getFirestore();
 
   const geminiApiKey = 'AIzaSyC3f6ljjJh8pPxDlHJkEo6eQrTHts1iOzk';
   const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
 
   useEffect(() => {
-    const getMovies = async () => {
+    const fetchSessionMovies = async () => {
       try {
-        const movieData = await fetchPopularMovies();
-        setMovies(movieData);
+        const sessionRef = doc(db, "sessions", sessionCode);
+        const sessionDoc = await getDoc(sessionRef);
+
+        if (sessionDoc.exists()) {
+          const sessionData = sessionDoc.data();
+          if (sessionData.movieList) {
+            setMovies(sessionData.movieList); // Assuming movies are stored here
+          } else {
+            setError('No movies found for this session');
+          }
+        } else {
+          setError('Session does not exist');
+        }
       } catch (error) {
-        setError('Failed to fetch movies');
+        setError('Failed to fetch session data');
       }
     };
 
-    getMovies();
+
+    fetchSessionMovies();
   }, []);
 
   // movie recommendations from Gemini 

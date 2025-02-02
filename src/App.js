@@ -8,6 +8,7 @@ import AuthPage from './pages/AuthPage';
 import Filter from './components/Filter';
 import WaitingRoom from './pages/WaitingRoom';
 import './App.css';
+import MovieList from './components/MovieList';
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -41,7 +42,8 @@ const App = () => {
         <Route path="/" element={user ? <Home user={user} /> : <AuthPage />} />
         <Route path="/home" element={user ? <Home user={user} /> : <AuthPage />} />
         <Route path="/filter" element={user ? <Filter /> : <AuthPage />} />
-        <Route path="/waitingroom/:sessionCode" element={user ? <WaitingRoom /> : <AuthPage />} />        
+        <Route path="/waitingroom/:sessionCode" element={user ? <WaitingRoom /> : <AuthPage />} /> 
+        <Route path="/movieList/:sessionCode" element={<MovieList />} />       
         <Route path="*" element={<NoPage />} />
       </Routes>
     </div>
