@@ -108,7 +108,6 @@ const MovieList = () => {
 
   return (
     <div>
-      <h1>Movie Suggestions</h1>
       {error && <p>{error}</p>}
 
       {currentMovie ? (
