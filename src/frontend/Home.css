@@ -1,5 +1,5 @@
 .logout {
-    background-color: #a393c2;
+    background-color: #e6e6e6;
     padding: 1vw;
     border: none;
 }
@@ -9,10 +9,11 @@
     justify-content: space-evenly;
     height: 100vh;
     align-items: center;
+    flex-direction: column;
 }
 
 .role-selection-button{
-    background-color: #a393c2;
+    background-color: #e6e6e6;
     padding: 2vw;
     border-radius: 10px;
 }
@@ -39,9 +40,8 @@
 #join-room-button{
     padding-left: 3vw;
     padding-right: 3vw;
-    background-color: #a393c2;
+    background-color: #e6e6e6;
     border-radius: 5px;
     border: none;
-
 }
 

@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import NoPage from './pages/NoPage';
 import AuthPage from './pages/AuthPage';
 import Filter from './components/Filter';
+import WaitingRoom from './pages/WaitingRoom';
 import './App.css';
 //a393c2
 
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/" element={user ? <Home user={user} /> : <AuthPage />} />
         <Route path="/home" element={user ? <Home user={user} /> : <AuthPage />} />
         <Route path="/filter" element={user ? <Filter /> : <AuthPage />} />
+        <Route path="/waiting-room/:roomCode" element={<WaitingRoom />} />
         <Route path="*" element={<NoPage />} />
       </Routes>
     </div>

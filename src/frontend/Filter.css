@@ -4,9 +4,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 80vh;
+    height: 40vh;
     width: 40vw;
-    background-color: #f5f5f5;
     padding: 20px;
     position: relative; /* For absolute positioning of the logo */
 }
@@ -23,12 +22,8 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-top: 200px; /* Increased margin-top from 160px to 200px */
-}
-
-/* Apply bounce animation on hover */
-.filter-container:hover {
-    animation: bounce 0.6s ease-in-out;
+    transform: scale(0.75);
+    margin-bottom: 6vh;
 }
 
 /* Align labels and inputs vertically, center the form elements */
