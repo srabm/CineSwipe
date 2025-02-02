@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { fetchPopularMovies, searchMovieInTMDB } from '../services/tmdbService';
-//import MovieCard from './MovieCard';
-import { getFirestore, doc, onSnapshot, getDoc } from 'firebase/firestore'; 
-import { useParams } from 'react-router-dom';
 
 const MovieList = () => {
-  const { sessionCode } = useParams(); // Get session code from the URL
   const [movies, setMovies] = useState([]);
   const [likedMovies, setLikedMovies] = useState([]);
   const [dislikedMovies, setDislikedMovies] = useState([]);
@@ -14,37 +10,29 @@ const MovieList = () => {
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const db = getFirestore();
 
-  const geminiApiKey = 'AIzaSyC3f6ljjJh8pPxDlHJkEo6eQrTHts1iOzk';
+  const geminiApiKey = process.env.REACT_APP_GEMINI_API_KEY;
   const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
 
-  useEffect(() => {
-    const fetchSessionMovies = async () => {
-      try {
-        const sessionRef = doc(db, "sessions", sessionCode);
-        const sessionDoc = await getDoc(sessionRef);
+  // Function to shuffle movies
+  const shuffleMovies = (movieArray) => {
+    return movieArray.sort(() => Math.random() - 0.5);
+  };
 
-        if (sessionDoc.exists()) {
-          const sessionData = sessionDoc.data();
-          if (sessionData.movieList) {
-            setMovies(sessionData.movieList); // Assuming movies are stored here
-          } else {
-            setError('No movies found for this session');
-          }
-        } else {
-          setError('Session does not exist');
-        }
+  useEffect(() => {
+    const getMovies = async () => {
+      try {
+        const movieData = await fetchPopularMovies();
+        setMovies(shuffleMovies(movieData)); // Randomize the order
       } catch (error) {
-        setError('Failed to fetch session data');
+        setError('Failed to fetch movies');
       }
     };
 
-
-    fetchSessionMovies();
+    getMovies();
   }, []);
 
-  // movie recommendations from Gemini 
+  // Fetch recommendations from Gemini
   const fetchRecommendations = async () => {
     if (likedMovies.length === 0) return;
 
@@ -71,7 +59,7 @@ const MovieList = () => {
 
     try {
       const response = await axios.post(geminiUrl, payload, { headers: { 'Content-Type': 'application/json' } });
-      const generatedText = response.data.candidates?.[0]?.content?.parts?.[0]?.text.trim();
+      const generatedText = response.data.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
 
       if (!generatedText) throw new Error('No recommendations received from Gemini.');
 
@@ -83,7 +71,7 @@ const MovieList = () => {
         if (tmdbMovie) validMovies.push(tmdbMovie);
       }
 
-      setRecommendedMovies(validMovies);
+      setRecommendedMovies(shuffleMovies(validMovies)); // Randomize recommendations
     } catch (error) {
       console.error('Error fetching recommendations:', error);
     } finally {
@@ -91,9 +79,10 @@ const MovieList = () => {
     }
   };
 
-  // like or dislike actions
+  // Handle like or dislike
   const handleResponse = (response) => {
-    const currentMovie = movies.length > 0 && currentIndex < movies.length ? movies[currentIndex] : recommendedMovies[currentIndex];
+    const isPopularMovie = currentIndex < movies.length;
+    const currentMovie = isPopularMovie ? movies[currentIndex] : recommendedMovies[currentIndex - movies.length];
 
     if (response === 'like') {
       setLikedMovies((prev) => [...prev, currentMovie.title]);
@@ -101,19 +90,21 @@ const MovieList = () => {
       setDislikedMovies((prev) => [...prev, currentMovie.title]);
     }
 
-    if (currentIndex < movies.length - 1) {
+    // Move to the next movie
+    if (isPopularMovie && currentIndex < movies.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
-    } else if (recommendedMovies.length === 0) {
-      fetchRecommendations(); // Switch to Gemini recommendations
-    } else if (currentIndex < recommendedMovies.length - 1) {
+    } else if (isPopularMovie && recommendedMovies.length === 0) {
+      fetchRecommendations(); // Fetch recommendations if transitioning
+    } else if (currentIndex - movies.length < recommendedMovies.length - 1) {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     } else {
       setError('No more movies available.');
     }
   };
 
-  // current movie to show
-  const currentMovie = movies.length > 0 && currentIndex < movies.length ? movies[currentIndex] : recommendedMovies[currentIndex];
+  // Determine which movie to show
+  const isPopularMovie = currentIndex < movies.length;
+  const currentMovie = isPopularMovie ? movies[currentIndex] : recommendedMovies[currentIndex - movies.length];
 
   return (
     <div>

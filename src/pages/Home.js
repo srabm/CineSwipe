@@ -14,7 +14,8 @@ const Home = ({ user }) => {
     await signOut(auth);
   };
 
-  const [hostRole, setHostRole] = useState(false);
+  const [hostRole, setHostRole] = useState(false);  // Determines whether the user is hosting or joining
+  const [showJoinForm, setShowJoinForm] = useState(false);  // Controls visibility of the join form
 
   const navigate = useNavigate();
 
@@ -39,26 +40,47 @@ const Home = ({ user }) => {
       <div className="role-selection">
 
         <div className="role-box">
-          <div className="role-selection-button" role="button" id="join" style={{ backgroundColor: hostRole ? '' : '#7b7781ea' }} onClick={() => setHostRole(false)}>
+          <div 
+            className="role-selection-button" 
+            role="button" 
+            id="join" 
+            style={{ backgroundColor: showJoinForm ? '#7b7781ea' : '' }} 
+            onClick={() => {
+              setHostRole(false);  // Set hostRole to false (joining role)
+              setShowJoinForm(true);  // Show the join form
+            }}
+          >
             <h2>Join a group</h2>
           </div>
-          <div className="join-content" style={{ display: hostRole ? 'none' : 'block'}}>
-            <form onSubmit={handleSubmit}>
-              <label className="input-join-room" htmlFor="room-code">Room code</label><br />
-              <input className="input-join-room" type="text" name="room-code"></input><br />
-              <input className="input-join-room" id="join-room-button" type="submit" value="JOIN ROOM"></input>
-            </form>
-          </div>
+          
+          {showJoinForm && (  // Conditional rendering of the form
+            <div className="join-content">
+              <form onSubmit={handleSubmit}>
+                <label className="input-join-room" htmlFor="room-code">Room code</label><br />
+                <input className="input-join-room" type="text" name="room-code"></input><br />
+                <input className="input-join-room" id="join-room-button" type="submit" value="JOIN ROOM"></input>
+              </form>
+            </div>
+          )}
         </div>
 
         <div className="role-box">
-          <div className="role-selection-button" role="button" id="host" style={{ display: hostRole ? 'none' : 'block'}} onClick={() => setHostRole(true)}>
+          <div 
+            className="role-selection-button" 
+            role="button" 
+            id="host" 
+            style={{ display: hostRole ? 'none' : 'block'}} 
+            onClick={() => {
+              setHostRole(true);  // Set hostRole to true (host role)
+              setShowJoinForm(false);  // Hide the join form
+            }}
+          >
             <h2>Create a group</h2>
           </div>
-            <div className="host-content" style={{ display: hostRole ? 'block' : 'none'}}>
-              <Filter/>
-            </div>
           
+          <div className="host-content" style={{ display: hostRole ? 'block' : 'none'}}>
+            <Filter/>
+          </div>
         </div>
       </div>
     </div>
