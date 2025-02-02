@@ -48,7 +48,7 @@ const Home = ({ user }) => {
         </div>
       </div>
     </div>
-  );
+  ); 
 };
 
 export default Home;
