@@ -15,9 +15,8 @@ const Home = ({ user }) => {
       <button onClick={handleLogout}>Logout</button>
       <div className="createGroup">Create a group</div>
       <div className="joinGroup">Join a group</div>
-      <MovieList user={user} />
     </div>
-  );
+  ); 
 };
 
 export default Home;

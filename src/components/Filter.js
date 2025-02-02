@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchMovieGenres } from '../services/tmdbService'; // Import the fetch function
+import { getFirestore, doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore'; // Add Firestore imports
+import { getAuth } from 'firebase/auth';
 
 function Filter() {
   const [genres, setGenres] = useState([]);
@@ -7,6 +9,10 @@ function Filter() {
   const [numSwipes, setNumSwipes] = useState(10); // Default value
   const [timePerSwipe, setTimePerSwipe] = useState(5); // Default value
   const [sessionCode, setSessionCode] = useState('');
+  const [sessionData, setSessionData] = useState(null); // Add state for session data
+
+  const auth = getAuth(); // Get Auth instance
+  const db = getFirestore(); // Get Firestore instance
 
   // Function to generate a unique code
   const generateUniqueCode = (length = 6) => {
@@ -19,6 +25,7 @@ function Filter() {
     return code;
   };
 
+  // Fetch genres when the component mounts
   useEffect(() => {
     const getGenres = async () => {
       try {
@@ -32,9 +39,68 @@ function Filter() {
     getGenres();
 
     // Generate and set the unique code when the component mounts
-    setSessionCode(generateUniqueCode());
+    const newSessionCode = generateUniqueCode();
+    setSessionCode(newSessionCode);
+
+    // Fetch session data from Firestore (if it exists)
+    const fetchSessionData = async () => {
+      const sessionRef = doc(db, "sessions", newSessionCode);
+      const sessionDoc = await getDoc(sessionRef);
+      if (sessionDoc.exists()) {
+        setSessionData(sessionDoc.data());
+      }
+    };
+
+    fetchSessionData();
   }, []);
 
+  // Function to create a session in Firestore
+  const createSession = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error('No user logged in');
+      return;
+    }
+
+    try {
+      const sessionRef = doc(db, "sessions", sessionCode);
+      await setDoc(sessionRef, {
+        host: user.uid,
+        participants: [user.uid], // The host is the first participant
+        maxParticipants: numSwipes, // You can adjust this as per the logic
+        sessionStatus: 'waiting', // Session starts in the 'waiting' state
+        genre: selectedGenre,
+        timePerSwipe,
+        createdAt: serverTimestamp(),
+      });
+
+      console.log('Session created with code:', sessionCode);
+    } catch (error) {
+      console.error('Error creating session:', error);
+    }
+  };
+
+  // Function to start the round (only for the host)
+  const startRound = async () => {
+    const user = auth.currentUser;
+    if (!user || !sessionData || user.uid !== sessionData.host) {
+      console.error('Only the host can start the round');
+      return;
+    }
+
+    try {
+      const sessionRef = doc(db, "sessions", sessionCode);
+      await updateDoc(sessionRef, {
+        sessionStatus: 'started', // Change the session status to 'started'
+      });
+
+      console.log('Round started!');
+    } catch (error) {
+      console.error('Error starting session:', error);
+    }
+  };
+
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = {
@@ -44,7 +110,9 @@ function Filter() {
       timer: timePerSwipe,
     };
     console.log('Form Data:', formData);
-    // You can handle further submission logic here
+
+    // Create session in Firestore
+    createSession();
   };
 
   return (
@@ -89,13 +157,12 @@ function Filter() {
         value={timePerSwipe}
         onChange={(e) => setTimePerSwipe(e.target.value)}
         min="1"
-        max="30"
+        max="60"
       />
       <br />
 
-      <button className='start' type='submit'>
-        Start Swiping!
-      </button>
+      {/* Button for the host to start the round */}
+      <button className='start-round' onClick={startRound}>Start Swiping!</button>
     </form>
   );
 }
