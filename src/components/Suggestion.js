@@ -10,7 +10,7 @@ const Suggestion = () => {
   const [recommendedMovies, setRecommendedMovies] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const geminiApiKey = 'YOUR_GEMINI_API_KEY';
+  const geminiApiKey = 'AIzaSyC3f6ljjJh8pPxDlHJkEo6eQrTHts1iOzk';
   const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`;
 
   useEffect(() => {
