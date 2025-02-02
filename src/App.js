@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from 'firebase/auth';
+import { getAuth, onAuthStateChanged, setPersistence, browserSessionPersistence } from 'firebase/auth';
 import { getFirestore, enableNetwork } from 'firebase/firestore'; // Import Firestore
 import Home from './pages/Home';
 import NoPage from './pages/NoPage';
@@ -21,7 +21,7 @@ const App = () => {
       .catch((error) => console.error("Error enabling Firestore network:", error));
 
     // Set persistence for auth
-    setPersistence(auth, browserLocalPersistence)
+    setPersistence(auth, browserSessionPersistence)
       .then(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
           setUser(currentUser);
