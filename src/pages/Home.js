@@ -16,17 +16,11 @@ const Home = ({ user }) => {
 
   return (
     <div>
-      <h1>Welcome, {user?.displayName || "User"}!</h1>
-
       {/* Logout Icon */}
       <button onClick={handleLogout} className="logout-icon-button">
         <FaDoorOpen size={24} color="#fff" />
       </button>
-
-      <div className="createGroup">Create a group</div>
-      <div className="joinGroup">Join a group</div>
-      <Filter user={user} />
-      <button className="logout" onClick={handleLogout}>Logout</button>
+      
       <div className="role-selection">
 
         <div className="role-box">
@@ -43,12 +37,14 @@ const Home = ({ user }) => {
         <div className="role-box">
           <div className="role-selection-button" role="button" id="host" style={{ backgroundColor: hostRole ? '#7b7781ea' : ''}} onClick={() => setHostRole(true)}>
             <h2>Create a group</h2>
-            <div className="host-content" style={{ display: hostRole ? 'block' : 'none'}}></div>
+            <div className="host-content" style={{ display: hostRole ? 'block' : 'none'}}>
+              <Filter/>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  );
+  ); 
 };
 
 export default Home;

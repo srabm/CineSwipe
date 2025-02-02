@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { fetchMovieGenres } from '../services/tmdbService'; // Import the fetch function
+import { fetchMovieGenres } from '../services/tmdbService';
+import { getFirestore, doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import { getAuth } from 'firebase/auth'; // Import signOut from Firebase
 import '../frontend/Filter.css';  // Ensure the correct CSS is linked
 
+import '../frontend/Filter.css';
+import CineSwipeLogo from '../images/Cineswipe.png';
 
 function Filter() {
   const [genres, setGenres] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState('');
-  const [numSwipes, setNumSwipes] = useState(10); // Default value
-  const [timePerSwipe, setTimePerSwipe] = useState(5); // Default value
+  const [numSwipes, setNumSwipes] = useState(10);
+  const [timePerSwipe, setTimePerSwipe] = useState(5);
   const [sessionCode, setSessionCode] = useState('');
-  const navigate = useNavigate(); // For navigation to another page
+  const [sessionData, setSessionData] = useState(null);
 
   const auth = getAuth();
+  const db = getFirestore();
+  const navigate = useNavigate();
 
-  // Function to generate a unique code
   const generateUniqueCode = (length = 6) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let code = '';
@@ -37,31 +41,76 @@ function Filter() {
     };
 
     getGenres();
-    setSessionCode(generateUniqueCode());  // Generate and set the unique code when the component mounts
+    const newSessionCode = generateUniqueCode();
+    setSessionCode(newSessionCode);
+
+    const fetchSessionData = async () => {
+      const sessionRef = doc(db, "sessions", newSessionCode);
+      const sessionDoc = await getDoc(sessionRef);
+      if (sessionDoc.exists()) {
+        setSessionData(sessionDoc.data());
+      }
+    };
+
+    fetchSessionData();
   }, []);
+
+  const createSession = async () => {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error('No user logged in');
+      return;
+    }
+
+    try {
+      const sessionRef = doc(db, "sessions", sessionCode);
+      await setDoc(sessionRef, {
+        host: user.uid,
+        participants: [user.uid],
+        maxParticipants: numSwipes,
+        sessionStatus: 'waiting',
+        genre: selectedGenre,
+        timePerSwipe,
+        createdAt: serverTimestamp(),
+      });
+
+      console.log('Session created with code:', sessionCode);
+    } catch (error) {
+      console.error('Error creating session:', error);
+    }
+  };
+
+  const startRound = async () => {
+    const user = auth.currentUser;
+    if (!user || !sessionData || user.uid !== sessionData.host) {
+      console.error('Only the host can start the round');
+      return;
+    }
+
+    try {
+      const sessionRef = doc(db, "sessions", sessionCode);
+      await updateDoc(sessionRef, {
+        sessionStatus: 'started',
+      });
+
+      console.log('Round started!');
+    } catch (error) {
+      console.error('Error starting session:', error);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const formData = {
-      code: sessionCode,  // Use the generated code
-      genre: selectedGenre,
-      swipes: numSwipes,
-      timer: timePerSwipe,
-    };
-    console.log('Form Data:', formData);
-    // You can handle further submission logic here
+    createSession();
   };
 
   return (
     <div className="filter-page">
-      
 
-      {/* Filter Form */}
       <form onSubmit={handleSubmit} className="filter-container">
         <h2>Host a Swipe Session!</h2>
-        <br />
-        
         <p>Share this code with your friends!</p>
+
         <label>Code: </label>
         <input name='Code' type='text' value={sessionCode} readOnly />
         <br />
@@ -81,22 +130,22 @@ function Filter() {
         </select>
         <br />
 
-        <label>Number of Swipes</label>
+        <label>Number of Swipes:</label>
         <input
           name='swipes'
           type='number'
           value={numSwipes}
-          onChange={(e) => setNumSwipes(e.target.value)}
+          onChange={(e) => setNumSwipes(Number(e.target.value))}
           min="1"
         />
         <br />
 
-        <label>Time per Swipe (in seconds)</label>
+        <label>Time per Swipe (in seconds):</label>
         <input
           name='timer'
           type='number'
           value={timePerSwipe}
-          onChange={(e) => setTimePerSwipe(e.target.value)}
+          onChange={(e) => setTimePerSwipe(Number(e.target.value))}
           min="1"
           max="30"
         />
@@ -106,6 +155,12 @@ function Filter() {
           Start Swiping!
         </button>
       </form>
+
+      {sessionData?.host === auth.currentUser?.uid && (
+        <button className='start-round' onClick={startRound}>
+          Start the Round
+        </button>
+      )}
     </div>
   );
 }
