@@ -94,11 +94,12 @@ function Filter() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    createSession();
+    await createSession();
+    navigate(`/waitingroom/${sessionCode}`); // Redirect to the waiting room
   };
-
+  
   return (
     <div className="filter-page">
 
