@@ -16,6 +16,11 @@ const Home = ({ user }) => {
 
   return (
     <div>
+      {/* Logout Icon */}
+      <button onClick={handleLogout} className="logout-icon-button">
+        <FaDoorOpen size={24} color="#fff" />
+      </button>
+      
       <div className="role-selection">
 
         <div className="role-box">
