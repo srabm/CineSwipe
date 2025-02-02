@@ -99,21 +99,17 @@ function Filter() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    createSession();
+    await createSession();
+    navigate(`/waitingroom/${sessionCode}`); // Redirect to the waiting room
   };
-
+  
   return (
     <div className="filter-page">
 
       <form onSubmit={handleSubmit} className="filter-container">
         <h2>Host a Swipe Session!</h2>
-        <p>Share this code with your friends!</p>
-
-        <label>Code: </label>
-        <input name='Code' type='text' value={sessionCode} readOnly />
-        <br />
 
         <label>Movie Genre:</label>
         <select
