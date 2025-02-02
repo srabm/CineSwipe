@@ -107,13 +107,8 @@ function WaitingRoom() {
           <label>Code: {sessionCode} </label>
           <br />
 
-          <div>
-            <h3>Participants:</h3>
-            <ul className='participants-waiting-room'>
-              {participants.map((participant) => (
-                <li key={participant.name}>{participantId}</li>
-              ))}
-            </ul>
+          <div className='participant-counter'>
+              
           </div>
 
           {sessionData?.host === auth.currentUser.uid && !isSessionStarted && (
