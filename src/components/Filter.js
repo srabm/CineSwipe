@@ -3,7 +3,7 @@ import { fetchMovieGenres } from '../services/tmdbService'; // Import the fetch 
 import { useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth'; // Import signOut from Firebase
 import '../frontend/Filter.css';  // Ensure the correct CSS is linked
-import CineSwipeLogo from '../images/Cineswipe.png'; // Import the logo
+
 
 function Filter() {
   const [genres, setGenres] = useState([]);
@@ -54,8 +54,7 @@ function Filter() {
 
   return (
     <div className="filter-page">
-      {/* Logo */}
-      <img src={require('../images/Cineswipe.png')} alt="CineSwipe Logo" className="filter-logo" />
+      
 
       {/* Filter Form */}
       <form onSubmit={handleSubmit} className="filter-container">

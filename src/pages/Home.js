@@ -12,7 +12,7 @@ const Home = ({ user }) => {
     await signOut(auth);
   };
 
-  const [ hostRole, setHostRole ] = useState(false);
+  const [hostRole, setHostRole] = useState(false);
 
   return (
     <div>
