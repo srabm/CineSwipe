@@ -21,6 +21,7 @@ const Home = ({ user }) => {
   const handleSubmit = e => {
     e.preventDefault();
     const roomCode = e.target.elements["room-code"].value.trim();
+    console.log(roomCode);
     if (roomCode) {
       navigate(`/waitingroom/${roomCode}`);  // Navigate with roomCode in the URL
     } else {
