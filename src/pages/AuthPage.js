@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { useNavigate } from 'react-router-dom';
-import '../frontend/AuthPage.css'; // Ensure CSS is linked
+import '../frontend/AuthPage.css';  // Ensure CSS is linked
 import CineSwipeLogo from '../images/Cineswipe.png'; // Import the logo
 
 const AuthPage = () => {
