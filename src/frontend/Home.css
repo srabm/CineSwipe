@@ -1,0 +1,47 @@
+.logout {
+    background-color: #a393c2;
+    padding: 1vw;
+    border: none;
+}
+
+.role-selection{
+    display: flex;
+    justify-content: space-evenly;
+    height: 100vh;
+    align-items: center;
+}
+
+.role-selection-button{
+    background-color: #a393c2;
+    padding: 2vw;
+    border-radius: 10px;
+}
+
+.role-selection-button:hover{
+    background-color: #7b7781ea;
+}
+
+.join-content{
+    display: flex;
+    flex-direction: column;  /* Stack elements vertically */
+    align-items: center; /* Center items horizontally */
+    height: 10vh;
+    justify-content: space-between;
+    margin-top: 3vh;
+}
+
+.input-join-room{
+    margin-top: 3vh;
+    margin-bottom: 3vh;
+    padding: 1vh;
+}
+
+#join-room-button{
+    padding-left: 3vw;
+    padding-right: 3vw;
+    background-color: #a393c2;
+    border-radius: 5px;
+    border: none;
+
+}
+
