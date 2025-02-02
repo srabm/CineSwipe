@@ -2,11 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchMovieGenres } from '../services/tmdbService';
 import { getFirestore, doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom';
-import '../frontend/Filter.css';  // Ensure the correct CSS is linked
-
 import '../frontend/Filter.css';
-import CineSwipeLogo from '../images/Cineswipe.png';
 
 function Filter() {
   const [genres, setGenres] = useState([]);
@@ -18,7 +14,6 @@ function Filter() {
 
   const auth = getAuth();
   const db = getFirestore();
-  const navigate = useNavigate();
 
   const generateUniqueCode = (length = 6) => {
     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -109,11 +104,6 @@ function Filter() {
 
       <form onSubmit={handleSubmit} className="filter-container">
         <h2>Host a Swipe Session!</h2>
-        <p>Share this code with your friends!</p>
-
-        <label>Code: </label>
-        <input name='Code' type='text' value={sessionCode} readOnly />
-        <br />
 
         <label>Movie Genre:</label>
         <select
