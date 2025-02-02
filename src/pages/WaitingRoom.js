@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, getDoc, setDoc } from 'firebase/firestore'; 
 import { getAuth } from 'firebase/auth';
-import { useParams } from 'react-router-dom'; // Import useParams
+import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
 import Filter from '../components/Filter';
 
 function WaitingRoom() {
@@ -13,6 +13,7 @@ function WaitingRoom() {
 
   const auth = getAuth();
   const db = getFirestore();
+  const navigate = useNavigate(); // Hook for navigation
 
   const joinSession = async () => {
     const user = auth.currentUser;
@@ -31,7 +32,7 @@ function WaitingRoom() {
           await updateDoc(sessionRef, {
             participants: arrayUnion(user.uid),
           });
-          console.log('User added to session');
+          console.log('User added to session ' + sessionCode);
         } else {
           console.log('Session is full or has already started');
         }
@@ -55,6 +56,8 @@ function WaitingRoom() {
 
         if (session.sessionStatus === 'started') {
           setIsSessionStarted(true);
+          // Redirect everyone to the next page when the session starts
+          navigate(`/nextPage/${sessionCode}`); // Replace with your next page route
         }
 
         if (auth.currentUser && session.participants.includes(auth.currentUser.uid)) {
@@ -66,7 +69,7 @@ function WaitingRoom() {
     joinSession();
 
     return () => unsubscribe();
-  }, [sessionCode, auth, db]);
+  }, [sessionCode, auth, db, navigate]);
 
   const startRound = async () => {
     if (!sessionData || sessionData.host !== auth.currentUser.uid) {
@@ -96,12 +99,12 @@ function WaitingRoom() {
         </div>
       ) : (
         <div>
-          {startRound ? (
+          {!userJoined ? (
             <p>Waiting for host to start the round...</p>
           ) : (
             <p>All participants are here! Host will start the round soon.</p>
           )}
-          
+
           <label>Code: {sessionCode} </label>
           <br />
 
