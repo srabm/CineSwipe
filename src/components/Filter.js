@@ -104,7 +104,6 @@ function Filter() {
 
   return (
     <div className="filter-page">
-      <img src={CineSwipeLogo} alt="CineSwipe Logo" className="filter-logo" />
 
       <form onSubmit={handleSubmit} className="filter-container">
         <h2>Host a Swipe Session!</h2>
