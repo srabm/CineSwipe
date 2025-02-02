@@ -1,20 +1,30 @@
 import { useEffect, useState } from 'react';
 import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, getDoc, setDoc } from 'firebase/firestore'; 
-import { getAuth } from 'firebase/auth';
-import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
-import "../frontend/WaitingRoom.css"
+import { getAuth, signOut } from 'firebase/auth';
+import { useParams, useNavigate } from 'react-router-dom'; 
+import "../frontend/WaitingRoom.css";
+import { FaDoorOpen } from "react-icons/fa";  
 
 function WaitingRoom() {
-  const { sessionCode } = useParams(); // Get sessionCode from URL
+  const { sessionCode } = useParams(); 
   const [sessionData, setSessionData] = useState(null);
   const [isSessionStarted, setIsSessionStarted] = useState(false);
-
   const [participants, setParticipants] = useState([]);
   const [userJoined, setUserJoined] = useState(false);
 
   const auth = getAuth();
   const db = getFirestore();
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate(); 
+
+  // Handle Logout
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate('/'); // Redirect to home/login page
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
 
   const joinSession = async () => {
     const user = auth.currentUser;
@@ -57,7 +67,6 @@ function WaitingRoom() {
 
         if (session.sessionStatus === 'started') {
           setIsSessionStarted(true);
-          // Redirect everyone to the next page when the session starts
           navigate(`/nextPage/${sessionCode}`); 
         }
 
@@ -73,7 +82,7 @@ function WaitingRoom() {
   }, [sessionCode, auth, db, navigate]);
 
   const startRound = async () => {
-    if (!sessionData || sessionData.host !== auth.currentUser.uid) {
+    if (!sessionData || auth.currentUser?.uid !== sessionData.host) {
       console.error('Only the host can start the round');
       return;
     }
@@ -86,15 +95,19 @@ function WaitingRoom() {
       }, { merge: true });
 
       console.log('Session started!');
-    // Redirect to MovieList page after session starts
-    navigate(`/movieList/${sessionCode}`);
-  } catch (error) {
-    console.error('Error starting session:', error);
-  }
-};
+      navigate(`/movieList/${sessionCode}`);
+    } catch (error) {
+      console.error('Error starting session:', error);
+    }
+  };
 
   return (
     <div className='waiting-room'>
+      {/* Logout Button */}
+      <button onClick={handleLogout} className="logout-icon-button">
+        <FaDoorOpen size={24} color="#fff" />
+      </button>
+
       {isSessionStarted ? (
         <div>
           <h2>Session Started!</h2>
@@ -103,16 +116,13 @@ function WaitingRoom() {
       ) : (
         <div>
           <p>Waiting for host to start the round...</p>
-          
-
           <label>Code: {sessionCode} </label>
           <br />
-
           <div className='participant-counter'>
-              {participants.length}
+            {participants.length}
           </div>
 
-          {sessionData?.host === auth.currentUser.uid && !isSessionStarted && (
+          {sessionData?.host === auth.currentUser?.uid && !isSessionStarted && (
             <button className='start-round-button' role='button' onClick={startRound}>Start the Round</button>
           )}
         </div>
