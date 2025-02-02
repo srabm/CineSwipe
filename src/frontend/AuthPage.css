@@ -1,0 +1,168 @@
+/* Center the entire page */
+.auth-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f5f5f5;
+    padding: 20px; /* Add padding for small screens */
+  }
+  
+/* Logo Styling with Shadow */
+.logo {
+    width: 200px; /* Adjust size as needed */
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 30px; /* Space between logo and login box */
+    filter: drop-shadow(4px 4px 10px rgba(0, 0, 0, 0.2));
+    transition: transform 0.6s ease; /* Smooth transition for flip */
+  }
+  
+  /* Add flip effect on hover */
+  .logo:hover {
+    animation: flip 0.6s forwards; /* Trigger flip animation on hover */
+  }
+  
+  /* Flip animation */
+  @keyframes flip {
+    0% {
+      transform: rotateY(0deg); /* Start with normal position */
+    }
+    50% {
+      transform: rotateY(180deg); /* Flip halfway */
+    }
+    100% {
+      transform: rotateY(360deg); /* Complete the flip */
+    }
+  }
+  
+  
+  /* Centering the auth container */
+  .auth-container {
+    width: 90%; /* Make the container responsive */
+    max-width: 400px; /* Max width for larger screens */
+    padding: 20px;
+    background: white;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    text-align: center;
+    transition: all 0.3s ease; /* Smooth transition for changes */
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center all children horizontally */
+  }
+  
+  /* Add bounce effect on hover */
+  .auth-container:hover {
+    animation: bounce 0.5s ease; /* Trigger the bounce animation */
+  }
+  
+  /* Bounce animation */
+  @keyframes bounce {
+    0% {
+      transform: translateY(0); /* Start at the normal position */
+    }
+    25% {
+      transform: translateY(-5px); /* Move up slightly */
+    }
+    50% {
+      transform: translateY(0); /* Go back to the normal position */
+    }
+    75% {
+      transform: translateY(-5px); /* Move up slightly again */
+    }
+    100% {
+      transform: translateY(0); /* Settle back to the original position */
+    }
+  }
+  
+  /* Style for input fields */
+  .auth-container input {
+    width: 100%; /* Ensure inputs take up full width of container */
+    max-width: 350px; /* Limit the width so they don't stretch too far */
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px; /* Dynamic font size */
+    transition: border 0.3s ease; /* Smooth border color transition */
+  }
+  
+  /* Focus effect for input fields */
+  .auth-container input:focus {
+    border-color: #a393c2; /* Change border color on focus */
+  }
+  
+  /* Button styling */
+  .auth-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #a393c2; /* Updated button color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out, transform 0.2s ease;
+  }
+  
+  .auth-container button:hover {
+    background-color: #8b7cb8;
+    transform: scale(1.05); /* Subtle scaling effect on hover */
+  }
+  
+  /* Error message styling */
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+  
+  /* Link styling */
+  .link-text {
+    color: #4a4a4a;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 10px;
+  }
+  
+  /* Media Queries for Responsiveness */
+  
+  /* For smaller screens like tablets and phones */
+  @media (max-width: 768px) {
+    .auth-page {
+      padding: 10px; /* Less padding on smaller screens */
+    }
+  
+    .auth-container {
+      width: 100%;
+      max-width: 90%; /* Smaller auth container on mobile */
+      padding: 15px; /* Less padding on mobile */
+    }
+  
+    .logo {
+      width: 150px; /* Smaller logo on mobile */
+    }
+  
+    .auth-container input {
+      font-size: 14px; /* Smaller font size on mobile */
+    }
+  
+    .auth-container button {
+      font-size: 14px; /* Smaller button font */
+    }
+  }
+  
+  /* For very small screens like phones in portrait mode */
+  @media (max-width: 480px) {
+    .auth-page {
+      padding: 5px; /* Minimal padding on very small screens */
+    }
+  
+    .auth-container {
+      width: 100%;
+      max-width: 100%; /* Full width auth container */
+    }
+  }
+  

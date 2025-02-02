@@ -7,6 +7,7 @@ import NoPage from './pages/NoPage';
 import AuthPage from './pages/AuthPage';
 import Filter from './components/Filter';
 import './App.css';
+//a393c2
 
 const App = () => {
   const [user, setUser] = useState(null);
@@ -29,10 +30,11 @@ const App = () => {
 
   return (
     <div className="App">
+
       <Routes>
         {/* If user is logged in, show Home, else show AuthPage */}
         <Route path="/" element={user ? <Home user={user} /> : <AuthPage />} />
-       <Route path="/home" element={user ? <Home user={user} /> : <AuthPage />} />
+        <Route path="/home" element={user ? <Home user={user} /> : <AuthPage />} />
         <Route path="/filter" element={user ? <Filter /> : <AuthPage />} />
         <Route path="*" element={<NoPage />} />
       </Routes>

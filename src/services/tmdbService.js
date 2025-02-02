@@ -61,3 +61,18 @@ export const searchMovieInTMDB = async (movieTitle) => {
     return null;
   }
 };
+export const fetchMovieGenres = async () => {
+  try {
+      const response = await axios.get(`${BASE_URL}/genre/movie/list`, {
+          params: {
+              api_key: TMDB_API_KEY,
+              language: 'en-US',
+          },
+      });
+      return response.data.genres;
+  } catch (error) {
+      console.error('Error fetching genres:', error);
+      throw error;
+  }
+};
+
