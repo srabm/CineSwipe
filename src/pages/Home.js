@@ -22,7 +22,7 @@ const Home = ({ user }) => {
     e.preventDefault();
     const roomCode = e.target.elements["room-code"].value.trim();
     if (roomCode) {
-      navigate(`/waiting-room/${roomCode}`);  // Navigate with roomCode in the URL
+      navigate(`/waitingroom/${roomCode}`);  // Navigate with roomCode in the URL
     } else {
       alert("Please enter a valid room code.");
     }

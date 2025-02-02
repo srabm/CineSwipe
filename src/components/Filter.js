@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchMovieGenres } from '../services/tmdbService';
 import { getFirestore, doc, setDoc, updateDoc, serverTimestamp, getDoc } from 'firebase/firestore';
+import { useNavigate } from "react-router-dom";
 import { getAuth } from 'firebase/auth';
 import '../frontend/Filter.css';
 
@@ -11,6 +12,7 @@ function Filter() {
   const [timePerSwipe, setTimePerSwipe] = useState(5);
   const [sessionCode, setSessionCode] = useState('');
   const [sessionData, setSessionData] = useState(null);
+  const navigate = useNavigate();
 
   const auth = getAuth();
   const db = getFirestore();

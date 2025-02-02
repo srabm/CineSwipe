@@ -41,7 +41,8 @@ const App = () => {
         <Route path="/" element={user ? <Home user={user} /> : <AuthPage />} />
         <Route path="/home" element={user ? <Home user={user} /> : <AuthPage />} />
         <Route path="/filter" element={user ? <Filter /> : <AuthPage />} />
-        <Route path="/waitingroom/:sessionCode" element={<WaitingRoom />} />        <Route path="*" element={<NoPage />} />
+        <Route path="/waitingroom/:sessionCode" element={user ? <WaitingRoom /> : <AuthPage />} />        
+        <Route path="*" element={<NoPage />} />
       </Routes>
     </div>
   );
