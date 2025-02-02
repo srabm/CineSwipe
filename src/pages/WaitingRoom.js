@@ -8,6 +8,7 @@ function WaitingRoom() {
   const { sessionCode } = useParams(); // Get sessionCode from URL
   const [sessionData, setSessionData] = useState(null);
   const [isSessionStarted, setIsSessionStarted] = useState(false);
+
   const [participants, setParticipants] = useState([]);
   const [userJoined, setUserJoined] = useState(false);
 
@@ -108,7 +109,7 @@ function WaitingRoom() {
           <br />
 
           <div className='participant-counter'>
-              
+              {participants.length}
           </div>
 
           {sessionData?.host === auth.currentUser.uid && !isSessionStarted && (
