@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { getFirestore, doc, onSnapshot, updateDoc, arrayUnion, getDoc, setDoc } from 'firebase/firestore'; 
 import { getAuth } from 'firebase/auth';
 import { useParams, useNavigate } from 'react-router-dom'; // Import useParams and useNavigate
-import Filter from '../components/Filter';
+import "../frontend/WaitingRoom.css"
 
 function WaitingRoom() {
   const { sessionCode } = useParams(); // Get sessionCode from URL
@@ -93,7 +93,7 @@ function WaitingRoom() {
 };
 
   return (
-    <div>
+    <div className='waiting-room'>
       {isSessionStarted ? (
         <div>
           <h2>Session Started!</h2>
@@ -101,26 +101,23 @@ function WaitingRoom() {
         </div>
       ) : (
         <div>
-          {!userJoined ? (
-            <p>Waiting for host to start the round...</p>
-          ) : (
-            <p>All participants are here! Host will start the round soon.</p>
-          )}
+          <p>Waiting for host to start the round...</p>
+          
 
           <label>Code: {sessionCode} </label>
           <br />
 
           <div>
             <h3>Participants:</h3>
-            <ul>
-              {participants.map((participantId) => (
-                <li key={participantId}>{participantId}</li>
+            <ul className='participants-waiting-room'>
+              {participants.map((participant) => (
+                <li key={participant.name}>{participantId}</li>
               ))}
             </ul>
           </div>
 
           {sessionData?.host === auth.currentUser.uid && !isSessionStarted && (
-            <button onClick={startRound}>Start the Round</button>
+            <button className='start-round-button' role='button' onClick={startRound}>Start the Round</button>
           )}
         </div>
       )}

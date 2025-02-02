@@ -1,0 +1,24 @@
+.waiting-room{
+    height: 90vh;
+}
+
+.start-round-button{
+    padding: 12px;
+    background-color: #a393c2; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out, transform 0.2s ease;
+}
+
+.start-round-button:hover{
+    background-color: #8b7cb8;
+    transform: scale(1.05);
+}
+
+.participants-waiting-room{
+    list-style: none;
+}
+

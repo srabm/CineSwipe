@@ -58,7 +58,7 @@ const Home = ({ user }) => {
               <form onSubmit={handleSubmit}>
                 <label className="input-join-room" htmlFor="room-code">Room code</label><br />
                 <input className="input-join-room" type="text" name="room-code"></input><br />
-                <input className="input-join-room" id="join-room-button" type="submit" value="JOIN ROOM"></input>
+                <input className="input-join-room" id="join-room-button" type="submit" value="Join Room"></input>
               </form>
             </div>
           )}
